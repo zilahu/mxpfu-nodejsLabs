@@ -26,34 +26,68 @@ let users = [
 // GET request: Retrieve all users
 router.get("/",(req,res)=>{
   // Copy the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+  res.send(JSON.stringify({users}, null, 4));
 });
 
 // GET by specific ID request: Retrieve a single user with email ID
 router.get("/:email",(req,res)=>{
   // Copy the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+  const email = req.params.email;
+  let filtered_users = users.filter((user) => user.email === email);
+  res.send(filtered_users);
 });
 
 
 // POST request: Create a new user
 router.post("/",(req,res)=>{
   // Copy the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+  const newuser = {
+    "firstName": req.query.firstName,
+    "lastName": req.query.lastName,
+    "email": req.query.email,
+    "DOB": req.query.DOB
+  };
+  users.push(newuser);
+
+  res.send("The user " + req.query.firstName + " has been created..");
 });
 
 
 // PUT request: Update the details of a user by email ID
 router.put("/:email", (req, res) => {
   // Copy the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+  const email = req.params.email;
+  let filtered_users = users.filter((user) => user.email === email);
+  if (filtered_users.length > 0) {
+    let filtered_user = filtered_users[0];
+    let DOB = req.query.DOB;
+    if (DOB) {
+        filtered_user.DOB = DOB;
+    }
+    let firstName = req.query.firstName;
+    if (firstName) {
+        filtered_user.firstName = firstName;
+    }
+    let lastName = req.query.lastName;
+    if (lastName) {
+        filtered_user.lastName = lastName;
+    }
+    users = users.filter((user) => user.email != email);
+    users.push(filtered_user);
+
+    res.send(`User with email ${email} updated`);
+  } else {
+    res.status(404);
+    res.send("Not found");
+  }
 });
 
 
 // DELETE request: Delete a user by email ID
 router.delete("/:email", (req, res) => {
-  // Copy the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+  const email = req.params.email;
+  users = users.filter((user) => user.email != email);
+  res.send(`User with ${email} deleted.}`);
 });
 
 module.exports=router;
